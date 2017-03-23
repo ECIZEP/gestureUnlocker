@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>手势解锁</title>
+    <script src="./js/unLocker.js"></script>
+    <style>
+        
+    </style>
+</head>
+
+<body>
+    <div id="canvas">
+    </div>
+    <script>
+        /*var canvas = document.getElementById('canvas');
+        if (canvas.getContext) {
+            var ctx = canvas.getContext('2d');
+            ctx.strokeStyle = "#ffa500";
+
+            ctx.fillRect(0,0,20,20);
+            ctx.beginPath();
+            ctx.moveTo(50,0);
+            ctx.lineTo(75,25);
+            ctx.lineTo(25,25);
+            //ctx.lineTo(50,50);
+            ctx.closePath();
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.arc(75,75,50,0,Math.PI*2,true); // 绘制
+            ctx.moveTo(110,75);
+            ctx.arc(75,75,35,0,Math.PI,false);   // 口(顺时针)
+            ctx.moveTo(65,65);
+            ctx.arc(60,65,5,0,Math.PI*2,true);  // 左眼
+            ctx.moveTo(95,65);
+            ctx.arc(90,65,5,0,Math.PI*2,true);  // 右眼
+            ctx.stroke();
+        }*/
+
+
+
+        
+
+        var locker = new Locker({
+            width: 300,
+            height: 300,
+            id: "canvas"
+        });
+       
+    </script>
+</body>
+
+</html>
