@@ -5,6 +5,10 @@ function GestureUnlocker(options) {
     if (!container || typeof options.callback !== 'function') {
         throw new Error('container must be offered and the callback should be a function');
     }
+    this.lineColor = options.lineColor ? options.lineColor : 'rgb(255,165,0)';
+    this.circleColor = options.circleColor ? options.circleColor : '#CFE6FF';
+    this.successColor = options.successColor ? options.successColor : 'green';
+    this.errorColor = options.errorColor ? options.errorColor : 'red'; 
     this.container = container;
     this.callback = options.callback;
     this._init(options.className);
@@ -15,7 +19,6 @@ GestureUnlocker.prototype = {
     // 初始化画布面板，绑定事件
     _init: function (className) {
         this.canvas = document.createElement('canvas');
-        
         this.canvas.className = typeof className === 'string' ? className : '';
         this.canvas.width = this.canvas.height = this.sideLength;
         this.container.appendChild(this.canvas);
@@ -59,7 +62,7 @@ GestureUnlocker.prototype = {
 
     _drawCircle: function () {
         for (var i = 0; i < this.points.length; i++) {
-            this.ctx.strokeStyle = '#CFE6FF';
+            this.ctx.strokeStyle = this.circleColor;
             this.ctx.lineWidth = 2;
             this.ctx.beginPath();
             this.ctx.arc(this.points[i].x, this.points[i].y, this.radius, 0, Math.PI * 2, true);
@@ -71,7 +74,7 @@ GestureUnlocker.prototype = {
     // 绘画用户滑动的路径
     _drawCurrentPoint: function () {
         this.clear();
-        this.ctx.fillStyle = "rgb(255,165,0)";
+        this.ctx.fillStyle = this.lineColor;
         this.ctx.lineWidth = 3;
         for (var i = 0; i < this.code.length; i++) {
             var index = this.code[i] - 1;
@@ -88,7 +91,7 @@ GestureUnlocker.prototype = {
 
     // 点到点之间的连线
     _drawLine: function (startPoint, endPoint) {
-        this.ctx.strokeStyle = "rgb(255,165,0)";
+        this.ctx.strokeStyle = this.lineColor;
         this.ctx.beginPath();
         this.ctx.moveTo(startPoint.x, startPoint.y);
         this.ctx.lineTo(endPoint.x, endPoint.y);
@@ -112,9 +115,9 @@ GestureUnlocker.prototype = {
     // 用户绘画结束后的正确错误显示
     drawCode: function (isSuccess, clearTime) {
         if (isSuccess) {
-            this.ctx.strokeStyle = "green";
+            this.ctx.strokeStyle = this.successColor;
         } else {
-            this.ctx.strokeStyle = "red";
+            this.ctx.strokeStyle = this.errorColor;
         }
         for (var i = 0; i < this.code.length; i++) {
             this.ctx.lineWidth = 3;
@@ -163,12 +166,12 @@ GestureUnlocker.prototype = {
             event.preventDefault();
             var relative = self._relativePosition(event);
 
-            self.ctx.strokeStyle = '#CFE6FF';
+           /* self.ctx.strokeStyle = '#CFE6FF';
             self.ctx.lineWidth = 2;
             self.ctx.beginPath();
             self.ctx.arc(relative.x, relative.y, 1, 0, Math.PI * 2, true);
             self.ctx.closePath();
-            self.ctx.stroke();
+            self.ctx.stroke();*/
             
 
             for (var i = 0; i < self.points.length; i++) {
