@@ -6,7 +6,7 @@ function GestureUnlocker(options) {
         throw new Error('container must be offered and the callback should be a function');
     }
     this.lineColor = options.lineColor ? options.lineColor : 'rgb(255,165,0)';
-    this.circleColor = options.circleColor ? options.circleColor : '#CFE6FF';
+    this.circleColor = options.circleColor ? options.circleColor : '#353031';
     this.successColor = options.successColor ? options.successColor : 'green';
     this.errorColor = options.errorColor ? options.errorColor : 'red'; 
     this.container = container;
@@ -157,7 +157,7 @@ GestureUnlocker.prototype = {
         }
         return false;
     },
-
+    
     // 监听滑动
     _bindEvent: function () {
         var self = this;

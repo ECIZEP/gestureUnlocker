@@ -8,51 +8,86 @@
     <title>手势解锁</title>
     <script src="./js/gestureUnlocker.js"></script>
     <style>
-
-
+        body {
+            background-color: #f0f0f2;
+            margin: 0px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin: 0px;
+            padding: 10px 0px;
+            border-bottom: 1px solid #ccc;
+        }
+        
         .unlocker {
             display: block;
-            background-color: grey;
-            
             width: 100%;
-            padding: 10px;
+            padding: 0px 20px;
             box-sizing: border-box;
-            
         }
     </style>
 </head>
 
 <body>
-    <p id="info">手势解锁</p>
-    <button onclick="reset()">清除密码</button>
+    <h1>手势密码组件</h1>
     <div class="canvas-container">
     </div>
+    <p id="info">请输入密码</p>
+    <div class="action">
+        <input type="radio" name="password" id="reset" checked/>
+        <label for="reset">清除并重设密码</label>
+
+        <input type="radio" name="password" id="check" />
+        <label for="check">验证密码</label>
+    </div>
+    <p>更多设置请查看readme文档</p>
     <script>
         'use strict';
         // 初始化
-        var p = document.getElementById('info');
-        var password = window.localStorage.getItem('password');
-        if (!password || password === '') {
-            p.textContent = "请设置密码";
-        }
+        (function() {
+            var p = document.getElementById('info'),
+                check = document.getElementById('check'),
+                reset = document.getElementById('reset');
+         
+            if (!window.localStorage.getItem('password')) {
+                p.textContent = "请设置密码";
+            } else {
+                check.checked = true;
+            }
+
+            reset.addEventListener('click', function () {
+                window.localStorage.removeItem('password');
+                p.textContent = "请设置密码";
+            }, false);
+
+            check.addEventListener('click', function () {
+                if(!window.localStorage.getItem('password')) {
+                    alert('请先设置密码!');
+                    document.getElementById('reset').checked = true;
+                } else {
+                    p.textContent = "请输入密码";
+                    this.checked = true;
+                }
+            }, false);
+        })();
+
+
+
         var temp;
-
-        function reset() {
-            window.localStorage.removeItem('password');
-            temp = null;
-            p.textContent = "请设置密码";
-        }
-
         var locker = new GestureUnlocker({
-            circleColor: 'green',
-            successColor: 'yellow',
+            circleColor: '#353031',
+            lineColor: 'rgb(255,165,0)',
+            successColor: '#289c4a',
+            errorColor: 'red',
             containner: ".canvas-container",
             className: 'unlocker',
             callback: function (data) {
+                var p = document.getElementById('info');
                 if (data.code.length < 4) {
                     this.drawCode(false, 300);
                     p.textContent = "密码太短，至少为4位";
-                    return ;
+                    return;
                 }
                 var password = window.localStorage.getItem('password');
                 if ((!password || password === '')) {
@@ -65,21 +100,27 @@
                             password = data.code;
                             window.localStorage.setItem('password', password);
                             p.textContent = "设置成功";
+                            temp = null;
                             this.drawCode(true, 400);
+                            
+                            setTimeout(function() {
+                                document.getElementById('check').checked = true;
+                                document.getElementById('p').textContent = "请输入密码";
+                            }, 400);
                         } else {
-                            this.drawCode(false, 300);
                             p.textContent = "两次输入不一致，请重试";
                             temp = null;
+                            this.drawCode(false, 300);
                         }
                     }
 
                 } else {
                     if (data.code === password) {
                         this.drawCode(true, 400);
-                        p.textContent = "解锁成功";
+                        p.textContent = "密码正确";
                     } else {
                         this.drawCode(false, 300);
-                        p.textContent = "解锁失败";
+                        p.textContent = "密码不正确";
                     }
                 }
 
