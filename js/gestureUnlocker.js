@@ -1,33 +1,49 @@
-function Locker(options) {
-    this.width = options.width;
-    this.height = options.height;
-    var container = document.getElementById(options.id);
+
+function GestureUnlocker(options) {
+    this.sideLength = options.sideLength ? options.sideLength : 0;
+    var container = document.querySelector(options.containner);
     if (!container || typeof options.callback !== 'function') {
-        throw new Error('options is incomplete');
+        throw new Error('container must be offered and the callback should be a function');
     }
     this.container = container;
-    this.init();
     this.callback = options.callback;
+    this._init(options.className);
 }
 
-Locker.prototype = {
+GestureUnlocker.prototype = {
 
     // 初始化画布面板，绑定事件
-    init: function () {
+    _init: function (className) {
         this.canvas = document.createElement('canvas');
-        this.canvas.width = this.width;
-        this.canvas.height = this.height;
+        
+        this.canvas.className = typeof className === 'string' ? className : '';
+        this.canvas.width = this.canvas.height = this.sideLength;
         this.container.appendChild(this.canvas);
         this.ctx = this.canvas.getContext('2d');
-        this.radius = this.width / 14;
+
+        // 获取canvas盒子模型的数值
+        this.borderLeft = window.getComputedStyle(this.canvas).getPropertyValue('border-left-width').replace('px','');
+        this.borderTop = window.getComputedStyle(this.canvas).getPropertyValue('border-top-width').replace('px','');
+        this.paddingLeft = window.getComputedStyle(this.canvas).getPropertyValue('padding-left').replace('px','');
+        this.paddingRight = window.getComputedStyle(this.canvas).getPropertyValue('padding-right').replace('px','');
+        this.paddingTop = window.getComputedStyle(this.canvas).getPropertyValue('padding-top').replace('px','');
+    
+        // clientWidth = width + padding-left + padding-right
+        // 如果class样式中定义了width属性，则重新计算canvas的width值
+        if (this.canvas.clientWidth - this.paddingLeft - this.paddingRight !== this.canvas.width) {
+            this.canvas.width = this.canvas.height = this.canvas.clientWidth - this.paddingLeft - this.paddingRight;
+        }
+
+        this.radius = this.canvas.width / 14;
+    
         // code： 用户绘画的密码
         this.code = [];
-        this.initCircles();
-        this.bindEvent();
+        this._initCircles();
+        this._bindEvent();
     },
 
     // 9个密码圆
-    initCircles: function () {
+    _initCircles: function () {
         this.points = [];
         for (var i = 0; i < 3; i++) {
             for (var j = 0; j < 3; j++) {
@@ -38,10 +54,10 @@ Locker.prototype = {
                 });
             }
         }
-        this.drawCircle();
+        this._drawCircle();
     },
 
-    drawCircle: function () {
+    _drawCircle: function () {
         for (var i = 0; i < this.points.length; i++) {
             this.ctx.strokeStyle = '#CFE6FF';
             this.ctx.lineWidth = 2;
@@ -53,7 +69,7 @@ Locker.prototype = {
     },
 
     // 绘画用户滑动的路径
-    drawCurrentPoint: function () {
+    _drawCurrentPoint: function () {
         this.clear();
         this.ctx.fillStyle = "rgb(255,165,0)";
         this.ctx.lineWidth = 3;
@@ -64,14 +80,14 @@ Locker.prototype = {
             this.ctx.closePath();
             this.ctx.fill();
             if (i !== 0) {
-                this.drawLine(this.points[this.code[i - 1] - 1], this.points[index]);
+                this._drawLine(this.points[this.code[i - 1] - 1], this.points[index]);
             }
         }
 
     },
 
     // 点到点之间的连线
-    drawLine: function (startPoint, endPoint) {
+    _drawLine: function (startPoint, endPoint) {
         this.ctx.strokeStyle = "rgb(255,165,0)";
         this.ctx.beginPath();
         this.ctx.moveTo(startPoint.x, startPoint.y);
@@ -83,14 +99,14 @@ Locker.prototype = {
     // 清除用户绘画的路径
     clear: function () {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.drawCircle();
+        this._drawCircle();
     },
 
     // 移动时的线条跟踪
-    movingLine: function (currentPoint) {
-        this.drawCurrentPoint();
+    _movingLine: function (currentPoint) {
+        this._drawCurrentPoint();
         var index = this.code[this.code.length - 1] - 1;
-        this.drawLine(this.points[index], currentPoint);
+        this._drawLine(this.points[index], currentPoint);
     },
 
     // 用户绘画结束后的正确错误显示
@@ -111,15 +127,18 @@ Locker.prototype = {
         clearTime = clearTime ? clearTime : 300;
         setTimeout(() => {
             this.code = [];
-            this.drawCurrentPoint();
+            this._drawCurrentPoint();
         }, clearTime);
     },
 
-    // 获取touch的点相对于canvas的坐标
-    relativePosition: function (event) {
+    // 将event的x,y坐标转换为canvas中的相对绘画源点的坐标
+    _relativePosition: function (event) {
+        // 不仅要考虑canvas元素相对视口的偏移，还要考虑canvas元素本身盒子模型造成的偏移
+        // 相对canvas绘画源点x,y = event-x,y - 视口偏移(文档流中的偏移，包含margin) - 盒子模型偏移(padding和border)
         var rect = event.currentTarget.getBoundingClientRect(),
-            relativeX = event.touches[0].clientX - rect.left,
-            relativeY = event.touches[0].clientY - rect.top;
+            relativeX = event.touches[0].clientX - rect.left - this.paddingLeft - this.borderLeft,
+            relativeY = event.touches[0].clientY - rect.top - this.paddingTop - this.borderTop;
+        
         return {
             x: relativeX,
             y: relativeY
@@ -127,7 +146,7 @@ Locker.prototype = {
     },
 
     // 检查点是否已经存在
-    codeExist: function (number) {
+    _codeExist: function (number) {
         for (var i = 0; i < this.code.length; i++) {
             if (this.code[i] === number) {
                 return true;
@@ -137,18 +156,26 @@ Locker.prototype = {
     },
 
     // 监听滑动
-    bindEvent: function () {
+    _bindEvent: function () {
         var self = this;
 
         this.canvas.addEventListener('touchstart', function (event) {
             event.preventDefault();
-            var relative = self.relativePosition(event);
+            var relative = self._relativePosition(event);
+
+            self.ctx.strokeStyle = '#CFE6FF';
+            self.ctx.lineWidth = 2;
+            self.ctx.beginPath();
+            self.ctx.arc(relative.x, relative.y, 1, 0, Math.PI * 2, true);
+            self.ctx.closePath();
+            self.ctx.stroke();
+            
 
             for (var i = 0; i < self.points.length; i++) {
                 if (Math.pow((relative.x - self.points[i].x), 2)
                     + Math.pow(relative.y - self.points[i].y, 2) < Math.pow(self.radius, 2)) {
                     self.code.push(self.points[i].number);
-                    self.drawCurrentPoint();
+                    self._drawCurrentPoint();
                     self.touching = true;
                     break;
                 }
@@ -157,19 +184,19 @@ Locker.prototype = {
 
         this.canvas.addEventListener('touchmove', function (event) {
             if (self.touching) {
-                var relative = self.relativePosition(event);
+                var relative = self._relativePosition(event);
 
                 for (var i = 0; i < self.points.length; i++) {
                     if (Math.pow((relative.x - self.points[i].x), 2)
                         + Math.pow(relative.y - self.points[i].y, 2) < Math.pow(self.radius, 2)) {
-                        if (!self.codeExist(self.points[i].number)) {
+                        if (!self._codeExist(self.points[i].number)) {
                             self.code.push(self.points[i].number);
                         }
                         break;
                     }
                 }
-
-                self.movingLine(relative);
+                
+                self._movingLine(relative);
             }
         }, false);
 
@@ -177,7 +204,7 @@ Locker.prototype = {
             if (self.touching) {
                 self.touching = false;
                 // 重画路径，去掉最后移动的线条
-                self.drawCurrentPoint();
+                self._drawCurrentPoint();
                 var data = {
                     code: self.code.toString().replace(/,/g, ''),
                 }

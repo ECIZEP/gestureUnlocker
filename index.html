@@ -6,16 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>手势解锁</title>
-    <script src="./js/unLocker.js"></script>
+    <script src="./js/gestureUnlocker.js"></script>
     <style>
 
+
+        .unlocker {
+            display: block;
+            background-color: grey;
+            
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            
+        }
     </style>
 </head>
 
 <body>
     <p id="info">手势解锁</p>
     <button onclick="reset()">清除密码</button>
-    <div id="canvasContainer">
+    <div class="canvas-container">
     </div>
     <script>
         'use strict';
@@ -33,10 +43,10 @@
             p.textContent = "请设置密码";
         }
 
-        var locker = new Locker({
-            width: 300,
-            height: 300,
-            id: "canvasContainer",
+        var locker = new GestureUnlocker({
+           
+            containner: ".canvas-container",
+            className: 'unlocker',
             callback: function (data) {
                 if (data.code.length < 4) {
                     this.drawCode(false, 300);
@@ -54,7 +64,7 @@
                             password = data.code;
                             window.localStorage.setItem('password', password);
                             p.textContent = "设置成功";
-                            this.clear();
+                            this.drawCode(true, 400);
                         } else {
                             this.drawCode(false, 300);
                             p.textContent = "两次输入不一致，请重试";
