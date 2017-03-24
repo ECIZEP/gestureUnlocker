@@ -127,10 +127,11 @@ GestureUnlocker.prototype = {
             this.ctx.closePath();
             this.ctx.stroke();
         }
+        this.code = [];
         clearTime = clearTime ? clearTime : 300;
-        setTimeout(() => {
-            this.code = [];
-            this._drawCurrentPoint();
+        var self = this;
+        setTimeout(function () {
+            self._drawCurrentPoint();
         }, clearTime);
     },
 
@@ -164,15 +165,7 @@ GestureUnlocker.prototype = {
 
         this.canvas.addEventListener('touchstart', function (event) {
             event.preventDefault();
-            var relative = self._relativePosition(event);
-
-           /* self.ctx.strokeStyle = '#CFE6FF';
-            self.ctx.lineWidth = 2;
-            self.ctx.beginPath();
-            self.ctx.arc(relative.x, relative.y, 1, 0, Math.PI * 2, true);
-            self.ctx.closePath();
-            self.ctx.stroke();*/
-            
+            var relative = self._relativePosition(event);           
 
             for (var i = 0; i < self.points.length; i++) {
                 if (Math.pow((relative.x - self.points[i].x), 2)
