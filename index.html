@@ -8,49 +8,73 @@
     <title>手势解锁</title>
     <script src="./js/unLocker.js"></script>
     <style>
-        
+
     </style>
 </head>
 
 <body>
-    <div id="canvas">
+    <p id="info">手势解锁</p>
+    <button onclick="reset()">清除密码</button>
+    <div id="canvasContainer">
     </div>
     <script>
-        /*var canvas = document.getElementById('canvas');
-        if (canvas.getContext) {
-            var ctx = canvas.getContext('2d');
-            ctx.strokeStyle = "#ffa500";
+        'use strict';
+        // 初始化
+        var p = document.getElementById('info');
+        var password = window.localStorage.getItem('password');
+        if (!password || password === '') {
+            p.textContent = "请设置密码";
+        }
+        var temp;
 
-            ctx.fillRect(0,0,20,20);
-            ctx.beginPath();
-            ctx.moveTo(50,0);
-            ctx.lineTo(75,25);
-            ctx.lineTo(25,25);
-            //ctx.lineTo(50,50);
-            ctx.closePath();
-            ctx.stroke();
-            
-            ctx.beginPath();
-            ctx.arc(75,75,50,0,Math.PI*2,true); // 绘制
-            ctx.moveTo(110,75);
-            ctx.arc(75,75,35,0,Math.PI,false);   // 口(顺时针)
-            ctx.moveTo(65,65);
-            ctx.arc(60,65,5,0,Math.PI*2,true);  // 左眼
-            ctx.moveTo(95,65);
-            ctx.arc(90,65,5,0,Math.PI*2,true);  // 右眼
-            ctx.stroke();
-        }*/
-
-
-
-        
+        function reset() {
+            window.localStorage.removeItem('password');
+            temp = null;
+            p.textContent = "请设置密码";
+        }
 
         var locker = new Locker({
             width: 300,
             height: 300,
-            id: "canvas"
+            id: "canvasContainer",
+            callback: function (data) {
+                if (data.code.length < 4) {
+                    this.drawCode(false, 300);
+                    p.textContent = "密码太短，至少为4位";
+                    return ;
+                }
+                var password = window.localStorage.getItem('password');
+                if ((!password || password === '')) {
+                    if (!temp) {
+                        temp = data.code;
+                        p.textContent = "请再次输入";
+                        this.clear();
+                    } else {
+                        if (temp === data.code) {
+                            password = data.code;
+                            window.localStorage.setItem('password', password);
+                            p.textContent = "设置成功";
+                            this.clear();
+                        } else {
+                            this.drawCode(false, 300);
+                            p.textContent = "两次输入不一致，请重试";
+                            temp = null;
+                        }
+                    }
+
+                } else {
+                    if (data.code === password) {
+                        this.drawCode(true, 400);
+                        p.textContent = "解锁成功";
+                    } else {
+                        this.drawCode(false, 300);
+                        p.textContent = "解锁失败";
+                    }
+                }
+
+
+            }
         });
-       
     </script>
 </body>
 
