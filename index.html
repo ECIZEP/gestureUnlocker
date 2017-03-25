@@ -21,10 +21,7 @@
         }
         
         .unlocker {
-            display: block;
             width: 100%;
-            padding: 0px 10px;
-            box-sizing: border-box;
         }
     </style>
 </head>
@@ -41,7 +38,7 @@
         <input type="radio" name="password" id="check" />
         <label for="check">验证密码</label>
     </div>
-    <p>更多设置请查看readme文档</p>
+    <a href="./readme.html" style="display: block;margin-top: 20px;">点我查看readme文档</a>
     <script>
         'use strict';
         // 初始化
@@ -124,8 +121,6 @@
                         p.textContent = "密码不正确";
                     }
                 }
-
-
             }
         });
     </script>

@@ -5,7 +5,7 @@ function GestureUnlocker(options) {
     if (!container || typeof options.callback !== 'function') {
         throw new Error('container must be offered and the callback should be a function');
     }
-    this.lineColor = options.lineColor ? options.lineColor : 'rgb(255,165,0)';
+    this.lineColor = options.lineColor ? options.lineColor : '#ffa500';
     this.circleColor = options.circleColor ? options.circleColor : '#353031';
     this.successColor = options.successColor ? options.successColor : 'green';
     this.errorColor = options.errorColor ? options.errorColor : 'red'; 
@@ -117,7 +117,8 @@ GestureUnlocker.prototype = {
     // 用户绘画结束后的正确错误显示
     drawCode: function (isSuccess, clearTime) {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
- 
+        isSuccess = typeof isSuccess === 'boolean' ? isSuccess : false; 
+
         for (var i = 0; i < this.points.length; i++) {
             if (this.code.toString().replace(/,/g, '').indexOf(i+1) === -1) {
                 // 不在绘画code中的原色显示
