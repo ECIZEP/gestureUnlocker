@@ -72,8 +72,10 @@ GestureUnlocker.prototype = {
     },
 
     // 绘画用户滑动的路径
-    _drawCurrentPoint: function () {
-        this.clear();
+    _drawCurrentPoint: function (notClear) {
+        if (!notClear) {
+            this.clear();
+        }
         this.ctx.fillStyle = this.lineColor;
         this.ctx.lineWidth = 3;
         for (var i = 0; i < this.code.length; i++) {
@@ -135,12 +137,14 @@ GestureUnlocker.prototype = {
             this.ctx.closePath();
             this.ctx.stroke();
         }
+        this._drawCurrentPoint(true);
 
         this.code = [];
         clearTime = clearTime ? clearTime : 300;
         var self = this;
+        // 延迟界面清楚
         setTimeout(function () {
-            self._drawCurrentPoint();
+            self.clear();
         }, clearTime);
     },
 

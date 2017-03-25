@@ -86,7 +86,7 @@
             callback: function (data) {
                 var p = document.getElementById('info');
                 if (data.code.length < 4) {
-                    this.drawCode(false, 300);
+                    this.drawCode(false, 400);
                     p.textContent = "密码太短，至少为4位";
                     return;
                 }
@@ -106,12 +106,12 @@
 
                             setTimeout(function () {
                                 document.getElementById('check').checked = true;
-                                document.getElementById('p').textContent = "请输入密码";
+                                document.getElementById('info').textContent = "请输入密码";
                             }, 400);
                         } else {
                             p.textContent = "两次输入不一致，请重试";
                             temp = null;
-                            this.drawCode(false, 300);
+                            this.drawCode(false, 400);
                         }
                     }
 
@@ -120,7 +120,7 @@
                         this.drawCode(true, 400);
                         p.textContent = "密码正确";
                     } else {
-                        this.drawCode(false, 300);
+                        this.drawCode(false, 400);
                         p.textContent = "密码不正确";
                     }
                 }
