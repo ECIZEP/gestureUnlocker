@@ -45,11 +45,11 @@
     <script>
         'use strict';
         // 初始化
-        (function() {
+        (function () {
             var p = document.getElementById('info'),
                 check = document.getElementById('check'),
                 reset = document.getElementById('reset');
-         
+
             if (!window.localStorage.getItem('password')) {
                 p.textContent = "请设置密码";
             } else {
@@ -62,7 +62,7 @@
             }, false);
 
             check.addEventListener('click', function () {
-                if(!window.localStorage.getItem('password')) {
+                if (!window.localStorage.getItem('password')) {
                     alert('请先设置密码!');
                     document.getElementById('reset').checked = true;
                 } else {
@@ -103,8 +103,8 @@
                             p.textContent = "设置成功";
                             temp = null;
                             this.drawCode(true, 400);
-                            
-                            setTimeout(function() {
+
+                            setTimeout(function () {
                                 document.getElementById('check').checked = true;
                                 document.getElementById('p').textContent = "请输入密码";
                             }, 400);

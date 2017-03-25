@@ -114,19 +114,28 @@ GestureUnlocker.prototype = {
 
     // 用户绘画结束后的正确错误显示
     drawCode: function (isSuccess, clearTime) {
-        if (isSuccess) {
-            this.ctx.strokeStyle = this.successColor;
-        } else {
-            this.ctx.strokeStyle = this.errorColor;
-        }
-        for (var i = 0; i < this.code.length; i++) {
-            this.ctx.lineWidth = 3;
-            var index = this.code[i] - 1;
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+ 
+        for (var i = 0; i < this.points.length; i++) {
+            if (this.code.toString().replace(/,/g, '').indexOf(i+1) === -1) {
+                // 不在绘画code中的原色显示
+                this.ctx.strokeStyle = this.circleColor;
+                this.ctx.lineWidth = 2;
+            } else if (isSuccess) {
+                // 在绘画code中,正确色显示
+                this.ctx.strokeStyle = this.successColor;
+                this.ctx.lineWidth = 3;
+            } else {
+                // 在绘画code中,错误色显示
+                this.ctx.strokeStyle = this.errorColor;
+                this.ctx.lineWidth = 3;
+            }
             this.ctx.beginPath();
-            this.ctx.arc(this.points[index].x, this.points[index].y, this.radius, 0, Math.PI * 2, true);
+            this.ctx.arc(this.points[i].x, this.points[i].y, this.radius, 0, Math.PI * 2, true);
             this.ctx.closePath();
             this.ctx.stroke();
         }
+
         this.code = [];
         clearTime = clearTime ? clearTime : 300;
         var self = this;
