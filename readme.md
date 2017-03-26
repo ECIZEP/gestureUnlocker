@@ -88,4 +88,3 @@ var locker = new GestureUnlocker({
 
 ### 自适应实现思路
 
-.......

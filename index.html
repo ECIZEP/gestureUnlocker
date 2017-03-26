@@ -21,7 +21,10 @@
         }
         
         .unlocker {
-            width: 100%;
+            background-color: #c4e6f4;
+            padding: 20px;
+            border: 20px solid #b5aee5;
+            width: 250px;
         }
     </style>
 </head>
@@ -83,7 +86,7 @@
             callback: function (data) {
                 var p = document.getElementById('info');
                 if (data.code.length < 4) {
-                    this.drawCode(false, 400);
+                    this.drawCode(true, 400);
                     p.textContent = "密码太短，至少为4位";
                     return;
                 }
@@ -96,15 +99,19 @@
                     } else {
                         if (temp === data.code) {
                             password = data.code;
-                            window.localStorage.setItem('password', password);
-                            p.textContent = "设置成功";
                             temp = null;
                             this.drawCode(true, 400);
-
-                            setTimeout(function () {
-                                document.getElementById('check').checked = true;
-                                document.getElementById('info').textContent = "请输入密码";
-                            }, 400);
+                            // 不是 Safari 无痕模式并且能用 localStorage
+                            if (!window.isPrivateMode && window.localStorage) {
+                                window.localStorage.setItem('password', password);
+                                p.textContent = "设置成功";
+                                setTimeout(function () {
+                                    document.getElementById('check').checked = true;
+                                    p.textContent = "请输入密码";
+                                }, 400);
+                            } else {
+                                alert("请关闭无痕模式，或者你的浏览器不支持localStorage");
+                            }
                         } else {
                             p.textContent = "两次输入不一致，请重试";
                             temp = null;
