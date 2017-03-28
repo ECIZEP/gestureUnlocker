@@ -125,7 +125,8 @@ var GestureUnlocker = (function () {
         // 用户绘画结束后的正确错误显示
         drawCode: function (isSuccess, clearTime) {
             this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-            isSuccess = typeof isSuccess === 'boolean' ? isSuccess : false;
+
+            clearTime = clearTime ? clearTime : 300;
 
             for (var i = 0; i < this.points.length; i++) {
                 if (this.code.toString().replace(/,/g, '').indexOf(i + 1) === -1) {
@@ -149,7 +150,6 @@ var GestureUnlocker = (function () {
             this._drawCurrentPoint(true);
 
             this.code = [];
-            clearTime = clearTime ? clearTime : 300;
             var self = this;
             // 延迟界面清楚
             setTimeout(function () {
