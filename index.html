@@ -9,7 +9,7 @@
     <script src="./js/gestureUnlocker.js"></script>
     <style>
         body {
-            background-color: #f0f0f2;
+            background-color: #f3f2ff;
             margin: 0px;
             text-align: center;
         }
@@ -23,16 +23,15 @@
         .unlocker {
             background-color: #c4e6f4;
             padding: 20px;
-            border: 20px solid #b5aee5;
-            width: 250px;
+            box-sizing: border-box;
+            width: 100%;
         }
     </style>
 </head>
 
 <body>
     <h1>手势密码组件</h1>
-    <div class="canvas-container">
-    </div>
+    <div class="canvas-container"></div>
     <p id="info">请输入密码</p>
     <div class="action">
         <input type="radio" name="password" id="reset" checked/>
@@ -46,6 +45,11 @@
         'use strict';
         // 初始化
         (function () {
+            // 不是 Safari 无痕模式并且能用 localStorage
+            if (window.isPrivateMode || !window.localStorage) {
+                alert("请关闭无痕模式，或者你的浏览器不支持localStorage");
+            }
+
             var p = document.getElementById('info'),
                 check = document.getElementById('check'),
                 reset = document.getElementById('reset');
@@ -72,46 +76,36 @@
             }, false);
         })();
 
+        // 回调函数
+        var callback = (function () {
+            var temp;
 
+            return function (data) {
+                var p = document.getElementById('info'),
+                    password = window.localStorage.getItem('password');
 
-        var temp;
-        var locker = new GestureUnlocker({
-            sideLength: 300,
-            circleColor: '#353031',
-            lineColor: 'rgb(255,165,0)',
-            successColor: '#289c4a',
-            errorColor: 'red',
-            containner: ".canvas-container",
-            className: 'unlocker',
-            callback: function (data) {
-                var p = document.getElementById('info');
-                if (data.code.length < 4) {
-                    this.drawCode(true, 400);
+                if (data.length < 4) {
+                    this.drawCode(false, 400);
                     p.textContent = "密码太短，至少为4位";
                     return;
                 }
-                var password = window.localStorage.getItem('password');
+
                 if ((!password || password === '')) {
                     if (!temp) {
-                        temp = data.code;
+                        temp = data;
                         p.textContent = "请再次输入";
                         this.clear();
                     } else {
-                        if (temp === data.code) {
-                            password = data.code;
+                        if (temp === data) {
+                            password = data;
                             temp = null;
                             this.drawCode(true, 400);
-                            // 不是 Safari 无痕模式并且能用 localStorage
-                            if (!window.isPrivateMode && window.localStorage) {
-                                window.localStorage.setItem('password', password);
-                                p.textContent = "设置成功";
-                                setTimeout(function () {
-                                    document.getElementById('check').checked = true;
-                                    p.textContent = "请输入密码";
-                                }, 400);
-                            } else {
-                                alert("请关闭无痕模式，或者你的浏览器不支持localStorage");
-                            }
+                            window.localStorage.setItem('password', password);
+                            p.textContent = "设置成功";
+                            setTimeout(function () {
+                                document.getElementById('check').checked = true;
+                                p.textContent = "请输入密码";
+                            }, 400);
                         } else {
                             p.textContent = "两次输入不一致，请重试";
                             temp = null;
@@ -120,7 +114,7 @@
                     }
 
                 } else {
-                    if (data.code === password) {
+                    if (data === password) {
                         this.drawCode(true, 400);
                         p.textContent = "密码正确";
                     } else {
@@ -129,6 +123,21 @@
                     }
                 }
             }
+        })();
+
+        // 创建一个GestureUnlocker实例
+        var locker = new GestureUnlocker({
+            sideLength: 300,                // 边长，canvas强制正方形
+            edge: 2,                        // 边距
+            gap: 2,                         // 间隔
+            circleColor: '#353031',         // 圆边的颜色
+            lineColor: 'rgb(255,165,0)',    // 滑动时连线的颜色
+            successColor: '#289c4a',        // 解锁成功时圆边颜色
+            errorColor: 'red',              // 解锁错误时圆边颜色
+            containner: ".canvas-container",// canvas容器选择器
+            className: 'unlocker',          // class名称,canvas元素样式定义
+            mode: 'easy',
+            callback: callback              // 滑动结束后的回调函数
         });
     </script>
 </body>
