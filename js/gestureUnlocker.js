@@ -201,7 +201,7 @@ var GestureUnlocker = (function () {
                 var relative = self._relativePosition(event),
                     singleCode = self._inWhichCode(relative.x, relative.y);
 
-                if (singleCode != -1 && !self._codeExist(singleCode)) {
+                if (singleCode !== -1 && !self._codeExist(singleCode)) {
                     self.code.push(singleCode);
                     self._drawCurrentPoint();
                     self.touching = true;
@@ -212,10 +212,24 @@ var GestureUnlocker = (function () {
                 event.preventDefault();
                 if (self.touching) {
                     var relative = self._relativePosition(event),
-                        singleCode = self._inWhichCode(relative.x, relative.y);
+                        singleCode = self._inWhichCode(relative.x, relative.y),
+                        // simple模式用来判断是否中途有绕过的点，例如对于singleCode = 1来说
+                        // 轨迹的上一个点可能是3 7 9，中途绕过了2 4 5，如果有绕过，轨迹需要包含上 
+                        crossMap = [[],[3,7,9],[8],[1,7,9],[6],[],[4],[1,3,9],[2],[1,3,7]];
 
-                    if (singleCode != -1 && !self._codeExist(singleCode)) {
-                        self.code.push(singleCode);
+                    if (singleCode !== -1 && !self._codeExist(singleCode)) {
+                        // 例如：从1绕过4滑到7，需要自动把4勾上，push进code数组
+                        if (self.mode === 'simple') {
+                            var top = self.code[self.code.length - 1];
+                            for (var i = 0; i < crossMap[singleCode].length; i++) {
+                                if (top === crossMap[singleCode][i]) {
+                                    self.code.push((top + singleCode)/2);
+                                    break;
+                                }
+                            }
+                        }
+                        // complex模式不需要检查轨迹是否有绕过点
+                        self.code.push(singleCode);                        
                     }
 
                     self._movingLine(relative);
