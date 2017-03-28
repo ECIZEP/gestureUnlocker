@@ -17,8 +17,6 @@ var GestureUnlocker = (function () {
         var edge = typeof options.edge === 'number' && options.edge > 0 ? options.edge : 2;
         var gap = typeof options.gap === 'number' && options.gap > 0 ? options.gap : 2;
 
-
-
         this._init(options.className, edge, gap);
     }
 

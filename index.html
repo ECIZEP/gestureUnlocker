@@ -16,7 +16,8 @@
         
         h1 {
             margin: 0px;
-            padding: 10px 0px;
+            font-size: 20px;
+            padding: 5px 0px;
             border-bottom: 1px solid #ccc;
         }
         
@@ -40,15 +41,27 @@
         <input type="radio" name="password" id="check" />
         <label for="check">验证密码</label>
     </div>
-    <a href="./readme.html" style="display: block;margin-top: 20px;">点我查看readme文档</a>
+    <a href="./readme.html" style="display: block;margin-top: 10px;">点我查看readme文档</a>
     <script>
         'use strict';
         // 初始化
         (function () {
-            // 不是 Safari 无痕模式并且能用 localStorage
-            if (window.isPrivateMode || !window.localStorage) {
-                alert("请关闭无痕模式，或者你的浏览器不支持localStorage");
+
+            // 是否支持localStorage
+            function isStorageSupported() {
+                var testKey = 'test';
+                try {
+                    window.localStorage.setItem(testKey, 'testValue')
+                    window.localStorage.removeItem(testKey)
+                    return true;
+                } catch (error) {
+                    alert('隐私/无痕模式下无法保存密码!请切换到正常模式');
+                    return false;
+                }
             }
+            
+            // safari浏览器无痕模式会导致localstorage无法访问
+            isStorageSupported();
 
             var p = document.getElementById('info'),
                 check = document.getElementById('check'),
@@ -136,7 +149,7 @@
             errorColor: 'red',              // 解锁错误时圆边颜色
             containner: ".canvas-container",// canvas容器选择器
             className: 'unlocker',          // class名称,canvas元素样式定义
-
+            mode: 'simple',                 // 滑动轨迹的模式
             callback: callback              // 滑动结束后的回调函数
         });
     </script>
