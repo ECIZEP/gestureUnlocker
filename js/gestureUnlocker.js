@@ -9,7 +9,7 @@ var GestureUnlocker = (function () {
         this.container = container;
         this.callback = options.callback;
         this.lineColor = options.lineColor ? options.lineColor : '#ffa500';
-        this.circleColor = options.circleColor ? options.circleColor : '#353031';
+        this.circleColor = options.circleColor ? options.circleColor : '#cecece';
         this.successColor = options.successColor ? options.successColor : 'green';
         this.errorColor = options.errorColor ? options.errorColor : 'red';
         this.mode = options.mode === 'simple' || options.mode === 'complex' ? options.mode : 'complex';

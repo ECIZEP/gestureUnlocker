@@ -9,7 +9,7 @@
     <script src="./js/gestureUnlocker.js"></script>
     <style>
         body {
-            background-color: #f3f2ff;
+            background-color: #efeff4;
             margin: 0px;
             text-align: center;
         }
@@ -22,7 +22,7 @@
         }
         
         .unlocker {
-            background-color: #c4e6f4;
+            background-color: #fff;
             padding: 20px;
             box-sizing: border-box;
             width: 100%;
@@ -55,13 +55,14 @@
                     window.localStorage.removeItem(testKey)
                     return true;
                 } catch (error) {
-                    alert('隐私/无痕模式下无法保存密码!请切换到正常模式');
                     return false;
                 }
             }
             
             // safari浏览器无痕模式会导致localstorage无法访问
-            isStorageSupported();
+            if(!isStorageSupported()) {
+                alert('不支持localStorage,请检查浏览器是否处于隐私/无痕模式,请切换到正常模式');
+            }
 
             var p = document.getElementById('info'),
                 check = document.getElementById('check'),
@@ -143,7 +144,7 @@
             sideLength: 300,                // 边长，canvas强制正方形
             edge: 2,                        // 边距
             gap: 2,                         // 间隔
-            circleColor: '#353031',         // 圆边的颜色
+            circleColor: '#cecece',         // 圆边的颜色
             lineColor: 'rgb(255,165,0)',    // 滑动时连线的颜色
             successColor: '#289c4a',        // 解锁成功时圆边颜色
             errorColor: 'red',              // 解锁错误时圆边颜色

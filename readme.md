@@ -8,6 +8,8 @@ Demo展示地址：[http://sunriseteam.cn/h5/index.html](http://sunriseteam.cn/h
 
 ## 如何使用 ?
 
+**一步上手**
+
 ```html
 <div class="canvas-container"></div>
 
@@ -15,13 +17,7 @@ Demo展示地址：[http://sunriseteam.cn/h5/index.html](http://sunriseteam.cn/h
 <script>
 var locker = new GestureUnlocker({
     sideLength: 300,				// 边长，canvas强制正方形
-    circleColor: '#353031',			// 圆边的颜色 
-    lineColor: 'rgb(255,165,0)', 	 // 滑动时连线的颜色
-    successColor: '#289c4a',		// 解锁成功时圆边颜色
-    errorColor: 'red',				// 解锁错误时圆边颜色
     containner: ".canvas-container", // canvas容器选择器
-    className: 'unlocker',			// class名称,canvas元素样式定义
-    mode: 'simple'				   // 滑动轨迹的模式 
     callback: function (data) {  	// 滑动结束后的回调函数,data为密码
       	// 滑动的密码: data
       	console.log(data);
@@ -37,7 +33,7 @@ var locker = new GestureUnlocker({
 | sideLength   | 画布的边长          | Number                     | 可选，默认值：`300`      |
 | edge         | 边距，值为半径的倍数     | Number                     | 可选，必须大于`0`，默认`2`  |
 | gap          | 间隔，值为半径的倍数     | Number                     | 可选，必须大于`0`，默认`2`  |
-| circleColor  | 圆边的颜色          | String—颜色值                 | 可选，默认值：`#353031`  |
+| circleColor  | 圆边的颜色          | String—颜色值                 | 可选，默认值：`#cecece`  |
 | lineColor    | 滑动时连线的颜色       | String—颜色值                 | 可选，默认值： `#ffa500` |
 | successColor | 解锁成功时的圆边高亮颜色   | String—颜色值                 | 可选，默认值：`green`    |
 | errorColor   | 解锁失败时的圆边高亮颜色   | String—颜色值                 | 可选，默认值：`red`      |
@@ -51,6 +47,27 @@ var locker = new GestureUnlocker({
 ![](./parameters.png)
 
 mode参数说明：`simple`模式和`complex`的区别——轨迹从1绕过4滑到7，`simple`模式下会自动把4包含，`complex`模式下允许绕过，不会包含。所以，`complex`模式允许用户设置出轨迹十分复杂的密码
+
+**复杂配置举例**
+
+```javascript
+// 创建一个GestureUnlocker实例
+var locker = new GestureUnlocker({
+    sideLength: 300,                // 边长，canvas强制正方形
+    edge: 2,                        // 边距
+    gap: 2,                         // 间隔
+    circleColor: '#cecece',         // 圆边的颜色
+    lineColor: 'rgb(255,165,0)',    // 滑动时连线的颜色
+    successColor: '#289c4a',        // 解锁成功时圆边颜色
+    errorColor: 'red',              // 解锁错误时圆边颜色
+    containner: ".canvas-container",// canvas容器选择器
+    className: 'unlocker',          // class名称,canvas元素样式定义
+    mode: 'simple',                 // 滑动轨迹的模式
+    callback: callback              // 滑动结束后的回调函数
+});
+```
+
+
 
 ### 方法详情
 
