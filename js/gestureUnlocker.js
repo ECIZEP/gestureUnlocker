@@ -220,7 +220,7 @@ var GestureUnlocker = (function () {
                         if (self.mode === 'simple') {
                             var top = self.code[self.code.length - 1];
                             for (var i = 0; i < crossMap[singleCode].length; i++) {
-                                if (top === crossMap[singleCode][i]) {
+                                if (top === crossMap[singleCode][i] && !self._codeExist((top + singleCode)/2)) {
                                     self.code.push((top + singleCode)/2);
                                     break;
                                 }
